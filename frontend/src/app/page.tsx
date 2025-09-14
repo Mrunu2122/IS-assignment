@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
-import { Box, Button, Container, Typography, useTheme } from '@mui/material';
+import { Box, Button, CircularProgress, Container, Typography, useTheme } from '@mui/material';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
@@ -9,14 +9,19 @@ import { useAuth } from '@/contexts/AuthContext';
 export default function Home() {
   const theme = useTheme();
   const router = useRouter();
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading } = useAuth();
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      router.push('/dashboard');
-    }
-  }, [isAuthenticated, router]);
-
+  // No more automatic redirection to dashboard
+  // Show loading state only while checking initial auth state
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+  
+  // If not authenticated, show the home page
   return (
     <Box
       sx={{

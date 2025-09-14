@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { isAuthenticated } from '@/utils/auth';
 
 interface AuthContextType {
-  isAuthenticated: boolean;
+  isAuthenticated: boolean | null;
   loading: boolean;
   login: (token: string) => void;
   logout: () => void;
@@ -15,12 +15,24 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
-  const [authenticated, setAuthenticated] = useState(false);
+  const [authenticated, setAuthenticated] = useState<boolean | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    setAuthenticated(isAuthenticated());
-    setLoading(false);
+    // Set initial authentication state
+    const checkAuth = () => {
+      try {
+        const authStatus = isAuthenticated();
+        setAuthenticated(authStatus);
+      } catch (error) {
+        console.error('Error checking authentication status:', error);
+        setAuthenticated(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    checkAuth();
   }, []);
 
   const login = (token: string) => {

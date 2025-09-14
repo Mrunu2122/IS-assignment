@@ -2,21 +2,18 @@
 
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { isAuthenticated } from '@/utils/auth';
 import './globals.css';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+// Using Inter as a reliable fallback font
+const inter = Inter({
   subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
 });
 
 const theme = createTheme({
@@ -29,26 +26,13 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: 'var(--font-geist-sans), Arial, sans-serif',
+    fontFamily: 'var(--font-inter), Arial, sans-serif',
   },
 });
 
-// Client-side only component to handle auth redirects
+// AuthHandler component - removed automatic redirections
 function AuthHandler({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const router = useRouter();
-
-  useEffect(() => {
-    const publicPaths = ['/login', '/register'];
-    const isPublicPath = publicPaths.includes(pathname);
-    
-    if (isPublicPath && isAuthenticated()) {
-      router.push('/dashboard');
-    } else if (!isPublicPath && !isAuthenticated()) {
-      router.push('/login');
-    }
-  }, [pathname, router]);
-
+  // No more automatic redirections
   return <>{children}</>;
 }
 
@@ -59,7 +43,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${inter.variable} antialiased`}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <AuthProvider>
