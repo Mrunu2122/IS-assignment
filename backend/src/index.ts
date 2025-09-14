@@ -19,7 +19,7 @@ app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/notes', notesRouter);
 
 // Health check endpoint
-app.get('/api/health', (_req, res) => {
+app.get('/api/v1/health', (_req, res) => {
   res.json({ status: 'ok', message: 'Server is running' });
 });
 
